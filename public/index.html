@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AniWave • Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="/favicon.ico" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">Ani<span>Wave</span></a>
+    <nav class="nav">
+      <a href="index.html" class="nav-link active">Home</a>
+      <a href="search.html" class="nav-link">Search</a>
+      <a href="https://anilist.co" target="_blank" rel="noreferrer" class="nav-link ext">AniList</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Trending Now</h1>
+        <p>Discover what the community is watching this week. Data is powered by AniList.</p>
+      </div>
+    </section>
+
+    <section>
+      <div id="anime-list" class="anime-grid" aria-live="polite"></div>
+      <div id="grid-skeleton" class="grid-skeleton"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Built with ❤️ using the AniList GraphQL API. This site surfaces metadata only and links out to legal streaming sources.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
