@@ -1,47 +1,58 @@
-// server.js (Updated)
-
 const express = require('express');
 const path = require('path');
 const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const CONSUMET_API_URL = "https://api.consumet.org/anime/gogoanime";
 
-// This assumes your html, css, and js files are in a folder named 'public'
+// This serves all the files in your 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-async function fetchAniList(query, variables){
-  try{
-    const { data } = await axios.post('https://graphql.anilist.co', { query, variables }, {
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
-    });
-    return data;
-  }catch(err){
-    console.error('AniList error:', err.response?.data || err.message);
-    throw new Error('AniList request failed');
+// --- NEW API ROUTES USING GOGOANIME ---
+
+// GETS TOP AIRING ANIME (for the homepage)
+app.get('/api/trending', async (req, res) => {
+  try {
+    const { data } = await axios.get(`${CONSUMET_API_URL}/top-airing`);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load top airing anime.' });
   }
-}
+});
 
-// ... (Your existing /api/trending, /api/search, /api/anime/:id routes are here) ...
-// (No changes needed to the existing routes)
+// SEARCHES FOR ANIME
+app.get('/api/search', async (req, res) => {
+  try {
+    const query = req.query.query;
+    if (!query) return res.status(400).json({ error: 'Query is required.' });
+    
+    const { data } = await axios.get(`${CONSUMET_API_URL}/${query}`);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Search failed.' });
+  }
+});
 
-// ####################################################################
-// ## NEW CODE BLOCK TO ADD ##
-// This new route will fetch the streaming links from Consumet.
-// ####################################################################
+// GETS DETAILED ANIME INFO
+app.get('/api/anime/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { data } = await axios.get(`${CONSUMET_API_URL}/info/${id}`);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load anime details.' });
+  }
+});
+
+// GETS THE STREAMING LINKS FOR AN EPISODE
 app.get('/api/watch/:episodeId', async (req, res) => {
     try {
         const episodeId = req.params.episodeId;
-        const url = `https://api.consumet.org/anime/gogoanime/watch/${episodeId}?server=gogocdn`;
-        
-        const { data } = await axios.get(url);
+        const { data } = await axios.get(`${CONSUMET_API_URL}/watch/${episodeId}?server=gogocdn`);
         res.json(data);
-
     } catch (err) {
-        res.status(500).json({ 
-            error: 'Failed to fetch streaming links.', 
-            message: err.message 
-        });
+        res.status(500).json({ error: 'Failed to fetch streaming links.' });
     }
 });
 
@@ -51,4 +62,4 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => console.log(`AniWave running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`AniWave running on port ${PORT}`));

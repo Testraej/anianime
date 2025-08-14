@@ -23,17 +23,19 @@ async function performSearch(){
     const res = await fetch(`/api/search?query=${encodeURIComponent(q)}`);
     const data = await res.json();
     sSkeleton.classList.add('hidden');
-    sResults.innerHTML = data.map(anime => `
+    
+    // The data format is now different (data.results)
+    sResults.innerHTML = data.results.map(anime => `
       <article class="card">
         <a href="/anime.html?id=${anime.id}">
-          <img class="thumb" src="${anime.coverImage.large}" alt="${anime.title.romaji}" loading="lazy" />
+          <img class="thumb" src="${anime.image}" alt="${anime.title}" loading="lazy" />
           <div class="meta">
-            <div class="title">${anime.title.romaji}</div>
+            <div class="title">${anime.title}</div>
           </div>
         </a>
       </article>
     `).join('');
-    if(!data.length){ sResults.innerHTML = '<div class="info-card">No results found.</div>'; }
+    if(!data.results.length){ sResults.innerHTML = '<div class="info-card">No results found.</div>'; }
   }catch(e){
     console.error(e);
     sSkeleton.classList.add('hidden');

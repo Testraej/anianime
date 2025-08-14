@@ -17,19 +17,20 @@ async function loadTrending(){
     const data = await res.json();
     if(gridSkeleton){ gridSkeleton.classList.add('hidden'); }
 
-    grid.innerHTML = data.map(anime => `
+    // The data format is now different (data.results)
+    grid.innerHTML = data.results.map(anime => `
       <article class="card" role="article">
-        <a href="/anime.html?id=${anime.id}" aria-label="Open ${anime.title.romaji}">
-          <img class="thumb" src="${anime.coverImage.large}" alt="${anime.title.romaji}" loading="lazy" />
+        <a href="/anime.html?id=${anime.id}" aria-label="Open ${anime.title}">
+          <img class="thumb" src="${anime.image}" alt="${anime.title}" loading="lazy" />
           <div class="meta">
-            <div class="title">${anime.title.romaji}</div>
+            <div class="title">${anime.title}</div>
           </div>
         </a>
       </article>
     `).join('');
   }catch(err){
     console.error(err);
-    if(grid){ grid.innerHTML = `<div class="info-card">Failed to load trending anime.</div>`; }
+    if(grid){ grid.innerHTML = `<div class="info-card">Failed to load trending anime. The API might be down.</div>`; }
   }
 }
 
